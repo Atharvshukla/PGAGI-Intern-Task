@@ -71,9 +71,9 @@ export function NewsSection() {
         }
       }
       
-      // Add pagination
-      params.append('page', page.toString())
-      params.append('pageSize', '20')
+      // // Add pagination
+      // params.append('page', page.toString())
+      // params.append('pageSize', '20')
       
       // Ensure the fetch is purely client-side
       const response = await fetch(`/api/news?${params.toString()}`, {
