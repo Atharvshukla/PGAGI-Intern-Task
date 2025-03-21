@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Search, Filter } from "lucide-react"
-import { API_KEYS, API_ENDPOINTS, NEWS_CATEGORIES } from "@/lib/api-config"
+import { Search, Filter, Globe } from "lucide-react"
+import { NEWS_CATEGORIES, NEWS_COUNTRIES } from "@/lib/api-config"
 import {
   Select,
   SelectContent,
@@ -24,54 +24,100 @@ interface NewsArticle {
   urlToImage: string
   publishedAt: string
   source: {
+    id: string
     name: string
   }
+  author?: string
+  content?: string
+}
+
+interface NewsSource {
+  id: string
+  name: string
+  description: string
+  url: string
+  category: string
+  language: string
+  country: string
 }
 
 export function NewsSection() {
   const [articles, setArticles] = useState<NewsArticle[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState<string>("technology")
+  const [selectedCategory, setSelectedCategory] = useState<string>("general")
+  const [selectedCountry, setSelectedCountry] = useState<string>("us")
   const [error, setError] = useState<string | null>(null)
+  const [page, setPage] = useState(1)
+  const [totalResults, setTotalResults] = useState(0)
 
   const fetchNews = async () => {
     try {
       setLoading(true)
       setError(null)
-      const query = searchQuery || selectedCategory
-      const today = new Date().toISOString().split('T')[0]
       
-      const response = await fetch(
-        `${API_ENDPOINTS.NEWS}?q=${query}&from=${today}&sortBy=publishedAt&apiKey=${API_KEYS.NEWS_API}`
-        // Removed headers to avoid preflight request
-      )
+      const params = new URLSearchParams()
+      
+      // Add search query if present
+      if (searchQuery) {
+        params.append('q', searchQuery)
+      }
+      
+      // Add category and country if no specific search query
+      if (!searchQuery) {
+        params.append('country', selectedCountry)
+        if (selectedCategory !== 'general') {
+          params.append('category', selectedCategory)
+        }
+      }
+      
+      // Add pagination
+      params.append('page', page.toString())
+      params.append('pageSize', '20')
+      
+      // Ensure the fetch is purely client-side
+      const response = await fetch(`/api/news?${params.toString()}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
       
       if (!response.ok) {
-        throw new Error(`Failed to fetch news: ${response.statusText}`)
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to fetch news')
       }
       
       const data = await response.json()
       
-      if (data.status === 'error') {
-        throw new Error(data.message || 'Failed to fetch news')
+      if (!data.articles || data.articles.length === 0) {
+        setArticles([])
+        setError('No articles found for this search.')
+        return
       }
       
-      setArticles(data.articles || [])
+      setTotalResults(data.totalResults)
+      setArticles(page === 1 ? data.articles : [...articles, ...data.articles])
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error fetching news. Please try again later.')
-      console.error(err)
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred.')
+      console.error('News fetch error:', err)
     } finally {
       setLoading(false)
     }
   }
 
   useEffect(() => {
+    setPage(1) // Reset page when filters change
     fetchNews()
-  }, [selectedCategory])
+  }, [selectedCategory, selectedCountry])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
+    setPage(1) // Reset page when searching
+    fetchNews()
+  }
+
+  const loadMore = () => {
+    setPage(prev => prev + 1)
     fetchNews()
   }
 
@@ -102,12 +148,28 @@ export function NewsSection() {
           <Button type="submit">Search</Button>
         </form>
         <div className="flex items-center gap-2">
+          <Globe className="h-4 w-4" />
+          <Select value={selectedCountry} onValueChange={setSelectedCountry}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select country" />
+            </SelectTrigger>
+            <SelectContent>
+              {NEWS_COUNTRIES.map((country) => (
+                <SelectItem key={country.code} value={country.code}>
+                  {country.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex items-center gap-2">
           <Filter className="h-4 w-4" />
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="general">General</SelectItem>
               {NEWS_CATEGORIES.map((category) => (
                 <SelectItem key={category} value={category}>
                   {category.charAt(0).toUpperCase() + category.slice(1)}
@@ -119,6 +181,13 @@ export function NewsSection() {
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-2">
+        <Badge
+          variant={selectedCategory === "general" ? "default" : "outline"}
+          className="cursor-pointer"
+          onClick={() => setSelectedCategory("general")}
+        >
+          General
+        </Badge>
         {NEWS_CATEGORIES.map((category) => (
           <Badge
             key={category}
@@ -131,7 +200,7 @@ export function NewsSection() {
         ))}
       </div>
 
-      {loading ? (
+      {loading && articles.length === 0 ? (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {[...Array(6)].map((_, i) => (
             <Card key={i} className="overflow-hidden">
@@ -149,11 +218,20 @@ export function NewsSection() {
           ))}
         </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {articles.map((article, index) => (
-            <NewsCard key={article.url} {...article} index={index} />
-          ))}
-        </div>
+        <>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {articles.map((article, index) => (
+              <NewsCard key={`${article.url}-${index}`} {...article} index={index} />
+            ))}
+          </div>
+          {articles.length < totalResults && !loading && (
+            <div className="text-center mt-8">
+              <Button onClick={loadMore} variant="outline">
+                Load More
+              </Button>
+            </div>
+          )}
+        </>
       )}
     </div>
   )

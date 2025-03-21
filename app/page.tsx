@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Card } from '@/components/ui/card';
 import { NewsSection } from '@/components/news/news-section';
+import { StockSection } from '@/components/stocks/stock-section';
 import { 
   LayoutDashboard, 
   LineChart, 
@@ -76,12 +77,7 @@ export default function Dashboard() {
         {/* Main Content */}
         <main className="flex-1 p-6">
           {activeSection === 'news' && <NewsSection />}
-          {activeSection === 'stocks' && (
-            <Card className="p-6">
-              <h3 className="font-semibold mb-4">Stock Market</h3>
-              <p className="text-sm text-muted-foreground">Loading stock data...</p>
-            </Card>
-          )}
+          {activeSection === 'stocks' && <StockSection />}
           {activeSection === 'weather' && (
             <Card className="p-6">
               <h3 className="font-semibold mb-4">Weather</h3>
