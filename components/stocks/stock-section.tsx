@@ -43,7 +43,12 @@ interface CompanyOverview {
   Exchange: string
 }
 
-export function StockSection() {
+interface StockSectionProps {
+  onSearch: (query: string) => void;
+}
+
+export function StockSection({ onSearch }: StockSectionProps) {
+  // Use the onSearch prop as needed
   const [symbol, setSymbol] = useState("AAPL")
   const [stockData, setStockData] = useState<StockData[]>([])
   const [overview, setOverview] = useState<CompanyOverview | null>(null)

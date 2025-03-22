@@ -36,9 +36,11 @@ export default function Dashboard() {
 
   const updateSearchHistory = (section: string, query: string) => {
     setSearchHistory(prev => {
+      type SectionKey = 'stocks' | 'weather' | 'news'; // Define a type for section keys
+      
       const newHistory = {
         ...prev,
-        [section]: [query, ...prev[section]].slice(0, 5)
+        [section as SectionKey]: [query, ...prev[section as SectionKey]].slice(0, 5) // Cast section to SectionKey
       };
       localStorage.setItem('searchHistory', JSON.stringify(newHistory));
       return newHistory;

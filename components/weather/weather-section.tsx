@@ -38,7 +38,12 @@ interface WeatherData {
   }>
 }
 
-export function WeatherSection() {
+interface WeatherSectionProps {
+  onSearch: (query: string) => void;
+}
+
+export function WeatherSection({ onSearch }: WeatherSectionProps) {
+  // Use the onSearch prop as needed
   const [city, setCity] = useState("")
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null)
   const [loading, setLoading] = useState(false)

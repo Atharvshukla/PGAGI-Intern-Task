@@ -41,7 +41,12 @@ interface NewsSource {
   country: string
 }
 
-export function NewsSection() {
+interface NewsSectionProps {
+  onSearch: (query: string) => void;
+}
+
+export function NewsSection({ onSearch }: NewsSectionProps) {
+  // Use the onSearch prop as needed
   const [articles, setArticles] = useState<NewsArticle[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
