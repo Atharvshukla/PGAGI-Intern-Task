@@ -5,6 +5,7 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import { Card } from '@/components/ui/card';
 import { NewsSection } from '@/components/news/news-section';
 import { StockSection } from '@/components/stocks/stock-section';
+import { WeatherSection } from '@/components/weather/weather-section';
 import { 
   LayoutDashboard, 
   LineChart, 
@@ -78,12 +79,7 @@ export default function Dashboard() {
         <main className="flex-1 p-6">
           {activeSection === 'news' && <NewsSection />}
           {activeSection === 'stocks' && <StockSection />}
-          {activeSection === 'weather' && (
-            <Card className="p-6">
-              <h3 className="font-semibold mb-4">Weather</h3>
-              <p className="text-sm text-muted-foreground">Loading weather data...</p>
-            </Card>
-          )}
+          {activeSection === 'weather' && <WeatherSection />}
         </main>
       </div>
     </div>
