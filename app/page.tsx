@@ -1,109 +1,93 @@
 "use client"
 
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { Card } from '@/components/ui/card';
-import { NewsSection } from '@/components/news/news-section';
-import { StockSection } from '@/components/stocks/stock-section';
-import { WeatherSection } from '@/components/weather/weather-section';
-import { 
-  LayoutDashboard, 
-  LineChart, 
-  Cloud, 
-  Newspaper,
-  Menu
-} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ParticlesBackground } from '@/components/particles-background';
+import { BarChart3, LineChart, CloudSun, ArrowRight } from 'lucide-react';
 
-export default function Dashboard() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [activeSection, setActiveSection] = useState('news');
+export default function LandingPage() {
+  const router = useRouter();
+
+  const features = [
+    {
+      icon: <BarChart3 className="h-12 w-12" />,
+      title: "Stock Analytics",
+      description: "Real-time stock market data and comprehensive analysis tools"
+    },
+    {
+      icon: <CloudSun className="h-12 w-12" />,
+      title: "Weather Insights",
+      description: "Accurate weather forecasts with detailed meteorological data"
+    },
+    {
+      icon: <LineChart className="h-12 w-12" />,
+      title: "News Feed",
+      description: "Latest news updates from trusted sources worldwide"
+    }
+  ];
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center px-4">
-          <div className="mr-4 flex">
-            <button
-              className="mr-2 p-2 hover:bg-accent hover:text-accent-foreground rounded-md lg:hidden"
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            >
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle Sidebar</span>
-            </button>
-            <a href="/" className="flex items-center space-x-2">
-              <LayoutDashboard className="h-5 w-5" />
-              <span className="font-bold">Analytics Dashboard</span>
-            </a>
-          </div>
-          <div className="flex-1" />
-          <ThemeToggle />
-        </div>
-      </header>
+    <div className="relative min-h-screen overflow-hidden bg-background">
+      <ParticlesBackground />
+      
+      <div className="absolute top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
 
-      <div className="flex relative">
-        {/* Sidebar */}
-        <aside 
-          className={`
-            ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} 
-            fixed lg:static top-[3.5rem] bottom-0 w-64 transition-transform duration-300 
-            border-r bg-background z-40 lg:z-0
-          `}
+      <div className="relative z-10 container mx-auto px-4 py-16 flex flex-col items-center justify-center min-h-screen">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-12"
         >
-          <nav className="space-y-2 p-4">
-            <button
-              onClick={() => {
-                setActiveSection('stocks');
-                if (window.innerWidth < 1024) setIsSidebarOpen(false);
-              }}
-              className={`flex w-full items-center space-x-2 px-3 py-2 rounded-md hover:bg-accent ${
-                activeSection === 'stocks' ? 'bg-accent' : ''
-              }`}
-            >
-              <LineChart className="h-5 w-5" />
-              <span>Stocks</span>
-            </button>
-            <button
-              onClick={() => {
-                setActiveSection('weather');
-                if (window.innerWidth < 1024) setIsSidebarOpen(false);
-              }}
-              className={`flex w-full items-center space-x-2 px-3 py-2 rounded-md hover:bg-accent ${
-                activeSection === 'weather' ? 'bg-accent' : ''
-              }`}
-            >
-              <Cloud className="h-5 w-5" />
-              <span>Weather</span>
-            </button>
-            <button
-              onClick={() => {
-                setActiveSection('news');
-                if (window.innerWidth < 1024) setIsSidebarOpen(false);
-              }}
-              className={`flex w-full items-center space-x-2 px-3 py-2 rounded-md hover:bg-accent ${
-                activeSection === 'news' ? 'bg-accent' : ''
-              }`}
-            >
-              <Newspaper className="h-5 w-5" />
-              <span>News</span>
-            </button>
-          </nav>
-        </aside>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-600">
+            Analytics Dashboard
+          </h1>
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+            Your all-in-one platform for real-time analytics, weather insights, and news updates
+          </p>
+        </motion.div>
 
-        {/* Overlay for mobile sidebar */}
-        {isSidebarOpen && (
-          <div 
-            className="fixed inset-0 bg-black/20 z-30 lg:hidden"
-            onClick={() => setIsSidebarOpen(false)}
-          />
-        )}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
+        >
+          {features.map((feature, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 + 0.5 }}
+              className="bg-card/50 backdrop-blur-sm p-6 rounded-lg border border-border/50 hover:border-primary/50 transition-colors"
+            >
+              <div className="mb-4 text-primary">{feature.icon}</div>
+              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+              <p className="text-muted-foreground">{feature.description}</p>
+            </motion.div>
+          ))}
+        </motion.div>
 
-        {/* Main Content */}
-        <main className="flex-1 p-4 lg:p-6 w-full">
-          {activeSection === 'news' && <NewsSection />}
-          {activeSection === 'stocks' && <StockSection />}
-          {activeSection === 'weather' && <WeatherSection />}
-        </main>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 1 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Button
+            size="lg"
+            onClick={() => router.push('/dashboard')}
+            className="text-lg group"
+          >
+            Get Started
+            <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+          </Button>
+        </motion.div>
       </div>
     </div>
   );

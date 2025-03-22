@@ -1,0 +1,172 @@
+"use client"
+
+import { useState, useEffect } from 'react';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { Card } from '@/components/ui/card';
+import { NewsSection } from '@/components/news/news-section';
+import { StockSection } from '@/components/stocks/stock-section';
+import { WeatherSection } from '@/components/weather/weather-section';
+import { UserDashboard } from '@/components/user/user-dashboard';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  LayoutDashboard, 
+  LineChart, 
+  Cloud, 
+  Newspaper,
+  Menu,
+  User
+} from 'lucide-react';
+
+export default function Dashboard() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [activeSection, setActiveSection] = useState('dashboard');
+  const [searchHistory, setSearchHistory] = useState({
+    stocks: [],
+    weather: [],
+    news: []
+  });
+
+  useEffect(() => {
+    // Load search history from localStorage
+    const savedHistory = localStorage.getItem('searchHistory');
+    if (savedHistory) {
+      setSearchHistory(JSON.parse(savedHistory));
+    }
+  }, []);
+
+  const updateSearchHistory = (section: string, query: string) => {
+    setSearchHistory(prev => {
+      const newHistory = {
+        ...prev,
+        [section]: [query, ...prev[section]].slice(0, 5)
+      };
+      localStorage.setItem('searchHistory', JSON.stringify(newHistory));
+      return newHistory;
+    });
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-14 items-center px-4">
+          <div className="mr-4 flex">
+            <button
+              className="mr-2 p-2 hover:bg-accent hover:text-accent-foreground rounded-md lg:hidden"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            >
+              <Menu className="h-5 w-5" />
+              <span className="sr-only">Toggle Sidebar</span>
+            </button>
+            <a href="/" className="flex items-center space-x-2">
+              <LayoutDashboard className="h-5 w-5" />
+              <span className="font-bold">Analytics Dashboard</span>
+            </a>
+          </div>
+          <div className="flex-1" />
+          <ThemeToggle />
+        </div>
+      </header>
+
+      <div className="flex relative">
+        <aside 
+          className={`
+            ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} 
+            fixed lg:static top-[3.5rem] bottom-0 w-64 transition-transform duration-300 
+            border-r bg-background z-40 lg:z-0
+          `}
+        >
+          <nav className="space-y-2 p-4">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => {
+                setActiveSection('dashboard');
+                if (window.innerWidth < 1024) setIsSidebarOpen(false);
+              }}
+              className={`flex w-full items-center space-x-2 px-3 py-2 rounded-md hover:bg-accent ${
+                activeSection === 'dashboard' ? 'bg-accent' : ''
+              }`}
+            >
+              <User className="h-5 w-5" />
+              <span>Dashboard</span>
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => {
+                setActiveSection('stocks');
+                if (window.innerWidth < 1024) setIsSidebarOpen(false);
+              }}
+              className={`flex w-full items-center space-x-2 px-3 py-2 rounded-md hover:bg-accent ${
+                activeSection === 'stocks' ? 'bg-accent' : ''
+              }`}
+            >
+              <LineChart className="h-5 w-5" />
+              <span>Stocks</span>
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => {
+                setActiveSection('weather');
+                if (window.innerWidth < 1024) setIsSidebarOpen(false);
+              }}
+              className={`flex w-full items-center space-x-2 px-3 py-2 rounded-md hover:bg-accent ${
+                activeSection === 'weather' ? 'bg-accent' : ''
+              }`}
+            >
+              <Cloud className="h-5 w-5" />
+              <span>Weather</span>
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => {
+                setActiveSection('news');
+                if (window.innerWidth < 1024) setIsSidebarOpen(false);
+              }}
+              className={`flex w-full items-center space-x-2 px-3 py-2 rounded-md hover:bg-accent ${
+                activeSection === 'news' ? 'bg-accent' : ''
+              }`}
+            >
+              <Newspaper className="h-5 w-5" />
+              <span>News</span>
+            </motion.button>
+          </nav>
+        </aside>
+
+        {isSidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/20 z-30 lg:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+
+        <main className="flex-1 p-4 lg:p-6 w-full">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeSection}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              {activeSection === 'dashboard' && (
+                <UserDashboard searchHistory={searchHistory} />
+              )}
+              {activeSection === 'news' && (
+                <NewsSection onSearch={(query) => updateSearchHistory('news', query)} />
+              )}
+              {activeSection === 'stocks' && (
+                <StockSection onSearch={(query) => updateSearchHistory('stocks', query)} />
+              )}
+              {activeSection === 'weather' && (
+                <WeatherSection onSearch={(query) => updateSearchHistory('weather', query)} />
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </main>
+      </div>
+    </div>
+  );
+}
