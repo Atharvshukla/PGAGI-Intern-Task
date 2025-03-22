@@ -85,37 +85,72 @@ export function StockSection({ onSearch }: StockSectionProps) {
   }, [symbol])
 
   const renderChart = () => {
-    const ChartComponent = chartType === "area" ? AreaChart : 
-                          chartType === "bar" ? BarChart : LineChart
-
-    const DataComponent = chartType === "area" ? Area :
-                         chartType === "bar" ? Bar : Line
-
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <ChartComponent data={stockData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
-          <YAxis />
-          <Tooltip
-            contentStyle={{
-              backgroundColor: "hsl(var(--background))",
-              border: "1px solid hsl(var(--border))",
-              borderRadius: "var(--radius)",
-            }}
-          />
-          <Legend />
-          <DataComponent
-            type="monotone"
-            dataKey="close"
-            stroke="hsl(var(--chart-1))"
-            fill="hsl(var(--chart-1))"
-            fillOpacity={0.3}
-          />
-        </ChartComponent>
+        {chartType === "area" ? (
+          <AreaChart data={stockData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "hsl(var(--background))",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: "var(--radius)",
+              }}
+            />
+            <Legend />
+            <Area
+              type="monotone"
+              dataKey="close"
+              stroke="hsl(var(--chart-1))"
+              fill="hsl(var(--chart-1))"
+              fillOpacity={0.3}
+            />
+          </AreaChart>
+        ) : chartType === "bar" ? (
+          <BarChart data={stockData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "hsl(var(--background))",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: "var(--radius)",
+              }}
+            />
+            <Legend />
+            <Bar
+              dataKey="close"
+              fill="hsl(var(--chart-1))"
+            />
+          </BarChart>
+        ) : (
+          <LineChart data={stockData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "hsl(var(--background))",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: "var(--radius)",
+              }}
+            />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="close"
+              stroke="hsl(var(--chart-1))"
+              fill="hsl(var(--chart-1))"
+              fillOpacity={0.3}
+            />
+          </LineChart>
+        )}
       </ResponsiveContainer>
-    )
-  }
+    );
+  };
 
   const priceChange = stockData.length > 1 
     ? stockData[0].close - stockData[1].close 
