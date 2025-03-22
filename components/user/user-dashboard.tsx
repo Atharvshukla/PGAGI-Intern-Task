@@ -3,19 +3,83 @@
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { LineChart, Cloud, Newspaper, History, X } from 'lucide-react';
+import { LineChart, Cloud, Newspaper, History, X, Film, TrendingUp, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface UserDashboardProps {
   searchHistory: {
     stocks: string[];
     weather: string[];
     news: string[];
+    movies: string[];
   };
+}
+
+interface StockData {
+  symbol: string;
+  price: number;
+  change: number;
+}
+
+interface WeatherData {
+  city: string;
+  temp: number;
+  condition: string;
 }
 
 export function UserDashboard({ searchHistory }: UserDashboardProps) {
   const router = useRouter();
+  const [stockData, setStockData] = useState<StockData[]>([
+    { symbol: 'AAPL', price: 0, change: 0 },
+    { symbol: 'GOOGL', price: 0, change: 0 },
+    { symbol: 'MSFT', price: 0, change: 0 }
+  ]);
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+
+  useEffect(() => {
+    // Fetch stock data for watchlist
+    stockData.forEach(async (stock) => {
+      try {
+        const response = await fetch(`/api/stocks/timeseries?symbol=${stock.symbol}`);
+        const data = await response.json();
+        if (data && data.length > 1) {
+          const latestPrice = data[0].close;
+          const previousPrice = data[1].close;
+          const change = ((latestPrice - previousPrice) / previousPrice) * 100;
+          
+          setStockData(prev => prev.map(s => 
+            s.symbol === stock.symbol 
+              ? { ...s, price: latestPrice, change } 
+              : s
+          ));
+        }
+      } catch (error) {
+        console.error(`Error fetching ${stock.symbol} data:`, error);
+      }
+    });
+
+    // Fetch weather for user's location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        try {
+          const response = await fetch(
+            `/api/weather?lat=${position.coords.latitude}&lon=${position.coords.longitude}`
+          );
+          const data = await response.json();
+          if (data && data.list && data.list[0]) {
+            setWeatherData({
+              city: data.city.name,
+              temp: data.list[0].temp,
+              condition: data.list[0].weather.main
+            });
+          }
+        } catch (error) {
+          console.error('Error fetching weather data:', error);
+        }
+      });
+    }
+  }, []);
 
   const clearHistory = (section: string) => {
     const currentHistory = JSON.parse(localStorage.getItem('searchHistory') || '{}');
@@ -28,20 +92,26 @@ export function UserDashboard({ searchHistory }: UserDashboardProps) {
     {
       title: 'Recent Stock Searches',
       icon: <LineChart className="h-5 w-5" />,
-      data: searchHistory.stocks || [],
+      data: searchHistory.stocks,
       section: 'stocks'
     },
     {
       title: 'Recent Weather Searches',
       icon: <Cloud className="h-5 w-5" />,
-      data: searchHistory.weather || [],
+      data: searchHistory.weather,
       section: 'weather'
     },
     {
       title: 'Recent News Searches',
       icon: <Newspaper className="h-5 w-5" />,
-      data: searchHistory.news || [],
+      data: searchHistory.news,
       section: 'news'
+    },
+    {
+      title: 'Recent Movie Searches',
+      icon: <Film className="h-5 w-5" />,
+      data: searchHistory.movies,
+      section: 'movies'
     }
   ];
 
@@ -50,7 +120,56 @@ export function UserDashboard({ searchHistory }: UserDashboardProps) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="grid gap-6 md:grid-cols-3"
+        className="grid gap-6 md:grid-cols-2"
+      >
+        {/* Stock Watchlist */}
+        <Card className="p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              Stock Watchlist
+            </h3>
+          </div>
+          <div className="space-y-4">
+            {stockData.map((stock) => (
+              <div key={stock.symbol} className="flex justify-between items-center">
+                <span className="font-medium">{stock.symbol}</span>
+                <div className="flex items-center gap-2">
+                  <span>${stock.price.toFixed(2)}</span>
+                  <span className={`flex items-center ${stock.change >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                    {stock.change >= 0 ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
+                    {Math.abs(stock.change).toFixed(2)}%
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        {/* Weather Overview */}
+        <Card className="p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold flex items-center gap-2">
+              <Cloud className="h-5 w-5" />
+              Current Weather
+            </h3>
+          </div>
+          {weatherData ? (
+            <div className="text-center">
+              <h4 className="text-xl font-semibold mb-2">{weatherData.city}</h4>
+              <p className="text-3xl font-bold mb-2">{Math.round(weatherData.temp)}°C</p>
+              <p className="text-muted-foreground">{weatherData.condition}</p>
+            </div>
+          ) : (
+            <p className="text-center text-muted-foreground">Loading weather data...</p>
+          )}
+        </Card>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="grid gap-6 md:grid-cols-2 lg:grid-cols-4"
       >
         {sections.map((section, index) => (
           <motion.div
@@ -103,7 +222,7 @@ export function UserDashboard({ searchHistory }: UserDashboardProps) {
       >
         <Card className="p-6">
           <h2 className="text-2xl font-bold mb-4">Quick Actions</h2>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-4">
             <Button
               onClick={() => router.push('/stocks')}
               className="flex items-center gap-2"
@@ -124,6 +243,13 @@ export function UserDashboard({ searchHistory }: UserDashboardProps) {
             >
               <Newspaper className="h-5 w-5" />
               Read News
+            </Button>
+            <Button
+              onClick={() => router.push('/movies')}
+              className="flex items-center gap-2"
+            >
+              <Film className="h-5 w-5" />
+              Browse Movies
             </Button>
           </div>
         </Card>

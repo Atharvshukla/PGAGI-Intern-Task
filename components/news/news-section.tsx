@@ -41,12 +41,13 @@ interface NewsSource {
   country: string
 }
 
+import React from 'react';
+
 interface NewsSectionProps {
   onSearch: (query: string) => void;
 }
 
-export function NewsSection({ onSearch }: NewsSectionProps) {
-  // Use the onSearch prop as needed
+export const NewsSection: React.FC<NewsSectionProps> = ({ onSearch }) => {
   const [articles, setArticles] = useState<NewsArticle[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
@@ -66,6 +67,7 @@ export function NewsSection({ onSearch }: NewsSectionProps) {
       // Add search query if present
       if (searchQuery) {
         params.append('q', searchQuery)
+        onSearch(searchQuery) // Use onSearch when a search query is present
       }
       
       // Add category and country if no specific search query

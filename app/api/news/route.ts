@@ -4,31 +4,18 @@ import { API_KEYS, API_ENDPOINTS } from '@/lib/api-config'
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
-    const apiUrl = 'https://newsapi.org/v2/top-headlines'
+    const apiUrl = API_ENDPOINTS.NEWS_HEADLINES
     
     // Construct the News API URL with the search parameters
-    const params = new URLSearchParams()
-    if (searchParams.toString()) {
-      params.append('apiKey', 'c80d98c29c0845d984a2aa8a7866b6a1')
-      Array.from(searchParams).forEach(([key, value]) => {
-        params.append(key, value)
-      })
-    } else {
-      params.append('apiKey', 'c80d98c29c0845d984a2aa8a7866b6a1')
-    }
+    const params = new URLSearchParams(searchParams)
+    params.set('apiKey', API_KEYS.NEWS_API)
     
-    console.log(`${apiUrl}?${params.toString()}`)
-
     const response = await fetch(`${apiUrl}?${params.toString()}`, {
       headers: {
         'Content-Type': 'application/json',
       },
       next: { revalidate: 300 }, // Cache for 5 minutes
     })
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch news: ${response.statusText}`)
-    }
 
     const data = await response.json()
 
@@ -41,11 +28,10 @@ export async function GET(request: Request) {
 
     return NextResponse.json(data)
   } catch (error) {
-    console.error('News API Error:', error instanceof Error ? error.message : 'Unknown error')
+    console.error('News API Error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     )
   }
 }
-

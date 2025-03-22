@@ -43,7 +43,6 @@ interface WeatherSectionProps {
 }
 
 export function WeatherSection({ onSearch }: WeatherSectionProps) {
-  // Use the onSearch prop as needed
   const [city, setCity] = useState("")
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null)
   const [loading, setLoading] = useState(false)
@@ -60,6 +59,9 @@ export function WeatherSection({ onSearch }: WeatherSectionProps) {
       
       const data = await response.json()
       setWeatherData(data)
+      if (searchParams.includes('city=')) {
+        onSearch(city); // Use onSearch when a city search is performed
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
     } finally {

@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import { NewsSection } from '@/components/news/news-section';
 import { StockSection } from '@/components/stocks/stock-section';
 import { WeatherSection } from '@/components/weather/weather-section';
+import { MovieSection } from '@/components/movies/movie-section';
 import { UserDashboard } from '@/components/user/user-dashboard';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -14,7 +15,8 @@ import {
   Cloud, 
   Newspaper,
   Menu,
-  User
+  User,
+  Film
 } from 'lucide-react';
 
 export default function Dashboard() {
@@ -23,29 +25,27 @@ export default function Dashboard() {
   const [searchHistory, setSearchHistory] = useState({
     stocks: [],
     weather: [],
-    news: []
+    news: [],
+    movies: []
   });
 
   useEffect(() => {
-    // Load search history from localStorage
     const savedHistory = localStorage.getItem('searchHistory');
     if (savedHistory) {
       setSearchHistory(JSON.parse(savedHistory));
     }
   }, []);
 
-  const updateSearchHistory = (section: string, query: string) => {
-    setSearchHistory(prev => {
-      type SectionKey = 'stocks' | 'weather' | 'news'; // Define a type for section keys
-      
-      const newHistory = {
-        ...prev,
-        [section as SectionKey]: [query, ...prev[section as SectionKey]].slice(0, 5) // Cast section to SectionKey
-      };
-      localStorage.setItem('searchHistory', JSON.stringify(newHistory));
-      return newHistory;
-    });
-  };
+  type SectionKeys = 'stocks' | 'weather' | 'news' | 'movies';
+
+  function updateHistory(section: SectionKeys, query: string, prev: { stocks: never[]; weather: never[]; news: never[]; movies: never[]; }) {
+    const newHistory = {
+      ...prev,
+      [section]: [query, ...prev[section].filter(item => item !== query)].slice(0, 5)
+    };
+    localStorage.setItem('searchHistory', JSON.stringify(newHistory));
+    return newHistory;
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -134,6 +134,20 @@ export default function Dashboard() {
               <Newspaper className="h-5 w-5" />
               <span>News</span>
             </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => {
+                setActiveSection('movies');
+                if (window.innerWidth < 1024) setIsSidebarOpen(false);
+              }}
+              className={`flex w-full items-center space-x-2 px-3 py-2 rounded-md hover:bg-accent ${
+                activeSection === 'movies' ? 'bg-accent' : ''
+              }`}
+            >
+              <Film className="h-5 w-5" />
+              <span>Movies</span>
+            </motion.button>
           </nav>
         </aside>
 
@@ -157,13 +171,16 @@ export default function Dashboard() {
                 <UserDashboard searchHistory={searchHistory} />
               )}
               {activeSection === 'news' && (
-                <NewsSection onSearch={(query) => updateSearchHistory('news', query)} />
+                <NewsSection onSearch={(query) => setSearchHistory(prev => updateHistory('news', query, prev))} />
               )}
               {activeSection === 'stocks' && (
-                <StockSection onSearch={(query) => updateSearchHistory('stocks', query)} />
+                <StockSection onSearch={(query) => setSearchHistory(prev => updateHistory( 'stocks', query, prev))} />
               )}
               {activeSection === 'weather' && (
-                <WeatherSection onSearch={(query) => updateSearchHistory('weather', query)} />
+                <WeatherSection onSearch={(query) =>setSearchHistory(prev => updateHistory('weather', query, prev))} />
+              )}
+              {activeSection === 'movies' && (
+                <MovieSection onSearch={(query) =>setSearchHistory(prev => updateHistory( 'movies', query, prev))} />
               )}
             </motion.div>
           </AnimatePresence>
