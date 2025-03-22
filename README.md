@@ -3,6 +3,9 @@
 ## Live Demo
 🎉 The project is live at [Analytics Dashboard](https://pgagi-sde-interntask-atharv.vercel.app/).
 
+## Demo Video
+[Demo Video](https://drive.google.com/file/d/15355TrNVJl7iA0Tdn9Vwx0KnbVJ6kjok/view?usp=sharing).
+
 ## Description
 The **Analytics Dashboard** is a web application that integrates data from three public APIs: **OpenWeatherMap API**, **NewsAPI**, and **Alpha Vantage API**. It provides real-time weather updates, the latest news headlines, and stock market data in an interactive and user-friendly interface. The application is built using **Next.js**, **TypeScript**, and **Tailwind CSS**, with interactive charts powered by **Recharts** and **Chart.js**.
 
