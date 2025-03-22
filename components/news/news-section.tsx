@@ -71,11 +71,10 @@ export function NewsSection() {
         }
       }
       
-      // // Add pagination
-      // params.append('page', page.toString())
-      // params.append('pageSize', '20')
+      // Add pagination
+      params.append('page', page.toString())
+      params.append('pageSize', '20')
       
-      // Ensure the fetch is purely client-side
       const response = await fetch(`/api/news?${params.toString()}`, {
         headers: {
           'Content-Type': 'application/json',
@@ -134,8 +133,8 @@ export function NewsSection() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row gap-4">
-        <form onSubmit={handleSearch} className="flex-1 flex gap-2">
+      <div className="flex flex-col gap-4">
+        <form onSubmit={handleSearch} className="flex gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -145,45 +144,48 @@ export function NewsSection() {
               className="pl-9"
             />
           </div>
-          <Button type="submit">Search</Button>
+          <Button type="submit" className="shrink-0">Search</Button>
         </form>
-        <div className="flex items-center gap-2">
-          <Globe className="h-4 w-4" />
-          <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select country" />
-            </SelectTrigger>
-            <SelectContent>
-              {NEWS_COUNTRIES.map((country) => (
-                <SelectItem key={country.code} value={country.code}>
-                  {country.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4" />
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="general">General</SelectItem>
-              {NEWS_CATEGORIES.map((category) => (
-                <SelectItem key={category} value={category}>
-                  {category.charAt(0).toUpperCase() + category.slice(1)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex items-center gap-2 flex-1">
+            <Globe className="h-4 w-4 shrink-0" />
+            <Select value={selectedCountry} onValueChange={setSelectedCountry}>
+              <SelectTrigger className="w-full sm:w-[180px]">
+                <SelectValue placeholder="Select country" />
+              </SelectTrigger>
+              <SelectContent>
+                {NEWS_COUNTRIES.map((country) => (
+                  <SelectItem key={country.code} value={country.code}>
+                    {country.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center gap-2 flex-1">
+            <Filter className="h-4 w-4 shrink-0" />
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger className="w-full sm:w-[180px]">
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="general">General</SelectItem>
+                {NEWS_CATEGORIES.map((category) => (
+                  <SelectItem key={category} value={category}>
+                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
 
-      <div className="flex gap-2 overflow-x-auto pb-2">
+      <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
         <Badge
           variant={selectedCategory === "general" ? "default" : "outline"}
-          className="cursor-pointer"
+          className="cursor-pointer whitespace-nowrap"
           onClick={() => setSelectedCategory("general")}
         >
           General
@@ -192,7 +194,7 @@ export function NewsSection() {
           <Badge
             key={category}
             variant={selectedCategory === category ? "default" : "outline"}
-            className="cursor-pointer"
+            className="cursor-pointer whitespace-nowrap"
             onClick={() => setSelectedCategory(category)}
           >
             {category.charAt(0).toUpperCase() + category.slice(1)}
@@ -201,7 +203,7 @@ export function NewsSection() {
       </div>
 
       {loading && articles.length === 0 ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {[...Array(6)].map((_, i) => (
             <Card key={i} className="overflow-hidden">
               <Skeleton className="h-48 w-full" />
@@ -219,7 +221,7 @@ export function NewsSection() {
         </div>
       ) : (
         <>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {articles.map((article, index) => (
               <NewsCard key={`${article.url}-${index}`} {...article} index={index} />
             ))}

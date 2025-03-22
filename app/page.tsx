@@ -22,10 +22,10 @@ export default function Dashboard() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center">
+        <div className="container flex h-14 items-center px-4">
           <div className="mr-4 flex">
             <button
-              className="mr-2 px-2 hover:bg-accent hover:text-accent-foreground rounded-md"
+              className="mr-2 p-2 hover:bg-accent hover:text-accent-foreground rounded-md lg:hidden"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             >
               <Menu className="h-5 w-5" />
@@ -41,12 +41,21 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <div className="flex">
+      <div className="flex relative">
         {/* Sidebar */}
-        <aside className={`${isSidebarOpen ? 'w-64' : 'w-0'} transition-all duration-300 overflow-hidden border-r bg-background`}>
+        <aside 
+          className={`
+            ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} 
+            fixed lg:static top-[3.5rem] bottom-0 w-64 transition-transform duration-300 
+            border-r bg-background z-40 lg:z-0
+          `}
+        >
           <nav className="space-y-2 p-4">
             <button
-              onClick={() => setActiveSection('stocks')}
+              onClick={() => {
+                setActiveSection('stocks');
+                if (window.innerWidth < 1024) setIsSidebarOpen(false);
+              }}
               className={`flex w-full items-center space-x-2 px-3 py-2 rounded-md hover:bg-accent ${
                 activeSection === 'stocks' ? 'bg-accent' : ''
               }`}
@@ -55,7 +64,10 @@ export default function Dashboard() {
               <span>Stocks</span>
             </button>
             <button
-              onClick={() => setActiveSection('weather')}
+              onClick={() => {
+                setActiveSection('weather');
+                if (window.innerWidth < 1024) setIsSidebarOpen(false);
+              }}
               className={`flex w-full items-center space-x-2 px-3 py-2 rounded-md hover:bg-accent ${
                 activeSection === 'weather' ? 'bg-accent' : ''
               }`}
@@ -64,7 +76,10 @@ export default function Dashboard() {
               <span>Weather</span>
             </button>
             <button
-              onClick={() => setActiveSection('news')}
+              onClick={() => {
+                setActiveSection('news');
+                if (window.innerWidth < 1024) setIsSidebarOpen(false);
+              }}
               className={`flex w-full items-center space-x-2 px-3 py-2 rounded-md hover:bg-accent ${
                 activeSection === 'news' ? 'bg-accent' : ''
               }`}
@@ -75,8 +90,16 @@ export default function Dashboard() {
           </nav>
         </aside>
 
+        {/* Overlay for mobile sidebar */}
+        {isSidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/20 z-30 lg:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+
         {/* Main Content */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-4 lg:p-6 w-full">
           {activeSection === 'news' && <NewsSection />}
           {activeSection === 'stocks' && <StockSection />}
           {activeSection === 'weather' && <WeatherSection />}

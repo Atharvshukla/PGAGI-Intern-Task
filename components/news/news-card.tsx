@@ -37,7 +37,7 @@ export function NewsCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
     >
-      <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+      <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
         <div className="relative h-48 w-full">
           <Image
             src={urlToImage || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800'}
@@ -49,15 +49,15 @@ export function NewsCard({
             {source.name}
           </Badge>
         </div>
-        <div className="p-4">
+        <div className="p-4 flex flex-col flex-1">
           <h3 className="font-semibold text-lg line-clamp-2 mb-2 hover:text-primary">
             {title}
           </h3>
-          <p className="text-muted-foreground text-sm line-clamp-3 mb-4">
+          <p className="text-muted-foreground text-sm line-clamp-3 mb-4 flex-1">
             {description}
           </p>
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <div className="flex items-center gap-4">
+          <div className="flex items-center justify-between text-sm text-muted-foreground mt-auto">
+            <div className="flex flex-wrap gap-2">
               <span className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
                 {formattedDate}
@@ -71,7 +71,7 @@ export function NewsCard({
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 hover:text-primary transition-colors"
+              className="flex items-center gap-1 hover:text-primary transition-colors shrink-0"
             >
               Read more
               <ExternalLink className="h-4 w-4" />
