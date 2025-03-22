@@ -28,19 +28,19 @@ export function UserDashboard({ searchHistory }: UserDashboardProps) {
     {
       title: 'Recent Stock Searches',
       icon: <LineChart className="h-5 w-5" />,
-      data: searchHistory.stocks || [], // Ensure data is an array
+      data: searchHistory.stocks || [],
       section: 'stocks'
     },
     {
       title: 'Recent Weather Searches',
       icon: <Cloud className="h-5 w-5" />,
-      data: searchHistory.weather || [], // Ensure data is an array
+      data: searchHistory.weather || [],
       section: 'weather'
     },
     {
       title: 'Recent News Searches',
       icon: <Newspaper className="h-5 w-5" />,
-      data: searchHistory.news || [], // Ensure data is an array
+      data: searchHistory.news || [],
       section: 'news'
     }
   ];
