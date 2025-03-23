@@ -6,6 +6,10 @@
 ## Demo Video
 [Demo Video](https://drive.google.com/file/d/15355TrNVJl7iA0Tdn9Vwx0KnbVJ6kjok/view?usp=sharing).
 
+## [Detailed Documentation](https://docs.google.com/document/d/1p4FF6pSvlc27TKQ8QZYVV0bv0BaHjLVHLkqgWeCq5Jw/edit?usp=sharing).
+
+
+
 ## Description
 The **Analytics Dashboard** is a web application that integrates data from three public APIs: **OpenWeatherMap API**, **NewsAPI**, and **Alpha Vantage API**. It provides real-time weather updates, the latest news headlines, and stock market data in an interactive and user-friendly interface. The application is built using **Next.js**, **TypeScript**, and **Tailwind CSS**, with interactive charts powered by **Recharts** and **Chart.js**.
 
@@ -32,7 +36,15 @@ The **Analytics Dashboard** is a web application that integrates data from three
 - **Key Metrics**: Display current price, daily high/low, volume, and percentage change.
 
 ---
-
+## Bonus Task's Completed 🌟
+- TMDB API Implemented with highly responsive frontend
+- User Authetication using Supabase
+- Higly Responsive Graphs and Chart in Weather and Stocks Sections
+- Bonus Header Implemented with User Avatar and Deopdown profile allowing to logout excluding Global search bar.
+- Reusable and Modular Components
+- Used ParticleJS and High Animation Across the application .
+  
+---
 ## Technologies Used 🛠️
 
 ### Frontend
@@ -41,6 +53,7 @@ The **Analytics Dashboard** is a web application that integrates data from three
 - **Styling**: Tailwind CSS
 - **Charts**: Recharts, Chart.js
 - **Icons**: Lucide React
+  
 
 ### APIs
 - **Weather**: OpenWeatherMap API
