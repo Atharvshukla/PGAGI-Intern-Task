@@ -37,7 +37,7 @@ export function MovieSection({ onSearch }: { onSearch: (query: string) => void }
       
       if (searchQuery) {
         params.append('query', searchQuery)
-        onSearch(searchQuery)  // Ensure this is correctly passed
+        onSearch(searchQuery)
       } else {
         params.append('category', selectedCategory)
       }

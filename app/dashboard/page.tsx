@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react';
+import { Header } from '@/components/layout/header';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Card } from '@/components/ui/card';
 import { NewsSection } from '@/components/news/news-section';
@@ -19,10 +20,13 @@ import {
   Film
 } from 'lucide-react';
 
+// Define a type for the keys of searchHistory
+type SectionType = 'stocks' | 'weather' | 'news' | 'movies';
+
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [activeSection, setActiveSection] = useState('dashboard');
-  const [searchHistory, setSearchHistory] = useState({
+  const [activeSection, setActiveSection] = useState<SectionType | 'dashboard'>('dashboard');
+  const [searchHistory, setSearchHistory] = useState<Record<SectionType, string[]>>({
     stocks: [],
     weather: [],
     news: [],
@@ -36,38 +40,20 @@ export default function Dashboard() {
     }
   }, []);
 
-  type SectionKeys = 'stocks' | 'weather' | 'news' | 'movies';
-
-  function updateHistory(section: SectionKeys, query: string, prev: { stocks: never[]; weather: never[]; news: never[]; movies: never[]; }) {
-    const newHistory = {
-      ...prev,
-      [section]: [query, ...prev[section].filter(item => item !== query)].slice(0, 5)
-    };
-    localStorage.setItem('searchHistory', JSON.stringify(newHistory));
-    return newHistory;
-  }
+  const updateSearchHistory = (section: SectionType, query: string) => {
+    setSearchHistory(prev => {
+      const newHistory = {
+        ...prev,
+        [section]: [query, ...prev[section].filter(item => item !== query)].slice(0, 5)
+      };
+      localStorage.setItem('searchHistory', JSON.stringify(newHistory));
+      return newHistory;
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center px-4">
-          <div className="mr-4 flex">
-            <button
-              className="mr-2 p-2 hover:bg-accent hover:text-accent-foreground rounded-md lg:hidden"
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            >
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle Sidebar</span>
-            </button>
-            <a href="/" className="flex items-center space-x-2">
-              <LayoutDashboard className="h-5 w-5" />
-              <span className="font-bold">Analytics Dashboard</span>
-            </a>
-          </div>
-          <div className="flex-1" />
-          <ThemeToggle />
-        </div>
-      </header>
+      <Header onSidebarToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
 
       <div className="flex relative">
         <aside 
@@ -170,17 +156,15 @@ export default function Dashboard() {
               {activeSection === 'dashboard' && (
                 <UserDashboard searchHistory={searchHistory} />
               )}
-              {activeSection === 'news' && (
-                <NewsSection onSearch={(query) => setSearchHistory(prev => updateHistory('news', query, prev))} />
-              )}
+             
               {activeSection === 'stocks' && (
-                <StockSection onSearch={(query) => setSearchHistory(prev => updateHistory( 'stocks', query, prev))} />
+                <StockSection onSearch={(query) => updateSearchHistory('stocks', query)} />
               )}
               {activeSection === 'weather' && (
-                <WeatherSection onSearch={(query) =>setSearchHistory(prev => updateHistory('weather', query, prev))} />
+                <WeatherSection onSearch={(query) => updateSearchHistory('weather', query)} />
               )}
               {activeSection === 'movies' && (
-                <MovieSection onSearch={(query) =>setSearchHistory(prev => updateHistory( 'movies', query, prev))} />
+                <MovieSection onSearch={(query) => updateSearchHistory('movies', query)} />
               )}
             </motion.div>
           </AnimatePresence>

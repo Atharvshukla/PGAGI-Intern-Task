@@ -5,10 +5,13 @@ import { motion } from 'framer-motion';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { ParticlesBackground } from '@/components/particles-background';
+import { AuthForm } from '@/components/auth/auth-form';
 import { BarChart3, LineChart, CloudSun, ArrowRight } from 'lucide-react';
+import { useState } from 'react';
 
 export default function LandingPage() {
   const router = useRouter();
+  const [showAuthForm, setShowAuthForm] = useState(false);
 
   const features = [
     {
@@ -73,20 +76,24 @@ export default function LandingPage() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 1 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          className="w-full max-w-sm mx-auto"
         >
-          <Button
+          {!showAuthForm ? (
+            <Button
             size="lg"
-            onClick={() => router.push('/dashboard')}
+            onClick={() => setShowAuthForm(true)}
             className="text-lg group"
           >
             Get Started
             <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
           </Button>
+      
+          ) : (
+            <AuthForm />
+          )}
         </motion.div>
       </div>
     </div>

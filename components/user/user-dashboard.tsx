@@ -192,7 +192,7 @@ export function UserDashboard({ searchHistory }: UserDashboardProps) {
                   <X className="h-4 w-4" />
                 </Button>
               </div>
-              {section.data.length > 0 ? (
+              {section.data && section.data.length > 0 ? (
                 <ul className="space-y-2">
                   {section.data.map((item, i) => (
                     <motion.li
