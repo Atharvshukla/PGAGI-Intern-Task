@@ -114,90 +114,120 @@ To run this project locally, follow these steps:
 ## Project Structure 🗂️
 
 ```plaintext
+├── README.md
 ├── app
-│   ├── api
-│   │   ├── news
-│   │   │   └── route.ts
-│   │   ├── stocks
-│   │   │   ├── overview
-│   │   │   │   └── route.ts
-│   │   │   └── timeseries
-│   │   │       └── route.ts
-│   │   └── weather
-│   │       └── route.ts
-│   ├── globals.css
-│   ├── layout.tsx
-│   └── page.tsx
+│   ├── api
+│   │   ├── movies
+│   │   │   └── route.ts
+│   │   ├── news
+│   │   │   └── route.ts
+│   │   ├── stocks
+│   │   │   ├── overview
+│   │   │   │   └── route.ts
+│   │   │   └── timeseries
+│   │   │       └── route.ts
+│   │   └── weather
+│   │       └── route.ts
+│   ├── auth
+│   │   └── callback
+│   │       └── route.ts
+│   ├── dashboard
+│   │   └── page.tsx
+│   ├── globals.css
+│   ├── layout.tsx
+│   └── page.tsx
 ├── components
-│   ├── news
-│   │   ├── news-card.tsx
-│   │   └── news-section.tsx
-│   ├── stocks
-│   │   └── stock-section.tsx
-│   ├── theme-provider.tsx
-│   ├── theme-toggle.tsx
-│   ├── ui
-│   │   ├── accordion.tsx
-│   │   ├── alert-dialog.tsx
-│   │   ├── alert.tsx
-│   │   ├── aspect-ratio.tsx
-│   │   ├── avatar.tsx
-│   │   ├── badge.tsx
-│   │   ├── breadcrumb.tsx
-│   │   ├── button.tsx
-│   │   ├── calendar.tsx
-│   │   ├── card.tsx
-│   │   ├── carousel.tsx
-│   │   ├── chart.tsx
-│   │   ├── checkbox.tsx
-│   │   ├── collapsible.tsx
-│   │   ├── command.tsx
-│   │   ├── context-menu.tsx
-│   │   ├── dialog.tsx
-│   │   ├── drawer.tsx
-│   │   ├── dropdown-menu.tsx
-│   │   ├── form.tsx
-│   │   ├── hover-card.tsx
-│   │   ├── input-otp.tsx
-│   │   ├── input.tsx
-│   │   ├── label.tsx
-│   │   ├── menubar.tsx
-│   │   ├── navigation-menu.tsx
-│   │   ├── pagination.tsx
-│   │   ├── popover.tsx
-│   │   ├── progress.tsx
-│   │   ├── radio-group.tsx
-│   │   ├── resizable.tsx
-│   │   ├── scroll-area.tsx
-│   │   ├── select.tsx
-│   │   ├── separator.tsx
-│   │   ├── sheet.tsx
-│   │   ├── sidebar.tsx
-│   │   ├── skeleton.tsx
-│   │   ├── slider.tsx
-│   │   ├── sonner.tsx
-│   │   ├── switch.tsx
-│   │   ├── table.tsx
-│   │   ├── tabs.tsx
-│   │   ├── textarea.tsx
-│   │   ├── toast.tsx
-│   │   ├── toaster.tsx
-│   │   ├── toggle-group.tsx
-│   │   ├── toggle.tsx
-│   │   └── tooltip.tsx
-│   └── weather
-│       └── weather-section.tsx
+│   ├── auth
+│   │   └── auth-form.tsx
+│   ├── layout
+│   │   └── header.tsx
+│   ├── movies
+│   │   ├── movie-card.tsx
+│   │   └── movie-section.tsx
+│   ├── news
+│   │   ├── news-card.tsx
+│   │   └── news-section.tsx
+│   ├── particles-background.tsx
+│   ├── stocks
+│   │   └── stock-section.tsx
+│   ├── theme-provider.tsx
+│   ├── theme-toggle.tsx
+│   ├── ui
+│   │   ├── accordion.tsx
+│   │   ├── alert-dialog.tsx
+│   │   ├── alert.tsx
+│   │   ├── aspect-ratio.tsx
+│   │   ├── avatar.tsx
+│   │   ├── badge.tsx
+│   │   ├── breadcrumb.tsx
+│   │   ├── button.tsx
+│   │   ├── calendar.tsx
+│   │   ├── card.tsx
+│   │   ├── carousel.tsx
+│   │   ├── chart.tsx
+│   │   ├── checkbox.tsx
+│   │   ├── collapsible.tsx
+│   │   ├── command.tsx
+│   │   ├── context-menu.tsx
+│   │   ├── dialog.tsx
+│   │   ├── drawer.tsx
+│   │   ├── dropdown-menu.tsx
+│   │   ├── form.tsx
+│   │   ├── hover-card.tsx
+│   │   ├── input-otp.tsx
+│   │   ├── input.tsx
+│   │   ├── label.tsx
+│   │   ├── menubar.tsx
+│   │   ├── navigation-menu.tsx
+│   │   ├── pagination.tsx
+│   │   ├── popover.tsx
+│   │   ├── progress.tsx
+│   │   ├── radio-group.tsx
+│   │   ├── resizable.tsx
+│   │   ├── scroll-area.tsx
+│   │   ├── select.tsx
+│   │   ├── separator.tsx
+│   │   ├── sheet.tsx
+│   │   ├── skeleton.tsx
+│   │   ├── slider.tsx
+│   │   ├── sonner.tsx
+│   │   ├── switch.tsx
+│   │   ├── table.tsx
+│   │   ├── tabs.tsx
+│   │   ├── textarea.tsx
+│   │   ├── toast.tsx
+│   │   ├── toaster.tsx
+│   │   ├── toggle-group.tsx
+│   │   ├── toggle.tsx
+│   │   └── tooltip.tsx
+│   ├── user
+│   │   └── user-dashboard.tsx
+│   └── weather
+│       └── weather-section.tsx
+├── components.json
 ├── hooks
-│   └── use-toast.ts
+│   └── use-toast.ts
 ├── lib
-│   ├── api-config.ts
-│   └── utils.ts
+│   ├── api-config.ts
+│   ├── supabase
+│   │   └── client.ts
+│   └── utils.ts
+├── middleware.ts
+├── next-env.d.ts
 ├── next.config.js
+├── package-lock.json
 ├── package.json
 ├── postcss.config.js
+├── supabase
+│   └── migrations
+│       └── 20250322201248_turquoise_cave.sql
 ├── tailwind.config.ts
 └── tsconfig.json
 ```
+
+## Commit History 
+![image](https://github.com/user-attachments/assets/0c342299-d0f7-4110-829c-d0289fcd152c)
+
 👤 Atharv Shukla<br>
 📧 atharvshukla.dev@gmail.com<br>
 🌐 http://atharvshukla.vercel.app<br>
