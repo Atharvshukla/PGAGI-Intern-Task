@@ -40,16 +40,14 @@ export default function Dashboard() {
     }
   }, []);
 
-  const updateSearchHistory = (section: SectionType, query: string) => {
-    setSearchHistory(prev => {
-      const newHistory = {
-        ...prev,
-        [section]: [query, ...prev[section].filter(item => item !== query)].slice(0, 5)
-      };
-      localStorage.setItem('searchHistory', JSON.stringify(newHistory));
-      return newHistory;
-    });
-  };
+  function updateHistory(section: SectionType, query: string, prev: Record<SectionType, string[]>) {
+    const newHistory = {
+      ...prev,
+      [section]: [query, ...prev[section].filter(item => item !== query)].slice(0, 5)
+    };
+    localStorage.setItem('searchHistory', JSON.stringify(newHistory));
+    return newHistory;
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -156,15 +154,17 @@ export default function Dashboard() {
               {activeSection === 'dashboard' && (
                 <UserDashboard searchHistory={searchHistory} />
               )}
-             
+              {activeSection === 'news' && (
+                <NewsSection onSearch={(query) => setSearchHistory(prev => updateHistory('news', query, prev))} />
+              )}
               {activeSection === 'stocks' && (
-                <StockSection onSearch={(query) => updateSearchHistory('stocks', query)} />
+                <StockSection onSearch={(query) => setSearchHistory(prev => updateHistory('stocks', query, prev))} />
               )}
               {activeSection === 'weather' && (
-                <WeatherSection onSearch={(query) => updateSearchHistory('weather', query)} />
+                <WeatherSection onSearch={(query) => setSearchHistory(prev => updateHistory('weather', query, prev))} />
               )}
               {activeSection === 'movies' && (
-                <MovieSection onSearch={(query) => updateSearchHistory('movies', query)} />
+                <MovieSection onSearch={(query) => setSearchHistory(prev => updateHistory('movies', query, prev))} />
               )}
             </motion.div>
           </AnimatePresence>
